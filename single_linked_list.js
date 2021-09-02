@@ -34,6 +34,19 @@ class SLL {
 
         return this.head.value;
     }
+
+    contains(findValue) {
+        var ptr = this.head;
+        var hasValue = false;
+        while (ptr != null){
+            if (ptr.value == findValue){
+                hasValue = true;
+                break;
+            }
+            ptr = ptr.next;
+        }
+        return hasValue;
+    }
 }
 
 let myList = new SLL();
@@ -41,3 +54,5 @@ myList.addFront("1st").addFront("2nd").addFront("3rd");
 console.log(myList.front());
 myList.removeFront();
 console.log(myList.front());
+console.log(myList.contains("1st"));
+console.log(myList.contains("4th"));
