@@ -51,7 +51,7 @@ function collatz(startNum, iterCount){
 
 let myCount = [0];
 var maxCount = 0, maxStart = 0;
-for (var i = 1; i <= 1000000; i++){
+for (var i = 1; i <= 100; i++){
     myCount[0] = 0;
     collatz(i, myCount);
     if (myCount[0] > maxCount){
@@ -60,3 +60,46 @@ for (var i = 1; i <= 1000000; i++){
     }
 }
 console.log(maxCount, maxStart);
+
+function telephoneWords(phoneNum){
+    // Remove dash.
+    phoneNum = phoneNum.replace("-", "");
+
+    let solutions = [];
+    rTelephoneWords(phoneNum, "", solutions);
+    return solutions;
+}
+
+function rTelephoneWords(phoneNum, subStr, solutions){
+    // Phone Letter Table
+    let phoneLetters = [
+        "O",
+        "I",
+        "ABC",
+        "DEF",
+        "GHI",
+        "JKL",
+        "MNO",
+        "PQRS",
+        "TUV",
+        "WXYZ"
+    ];
+
+    // Phone number char list completed. Add to list.
+    if (subStr.length == phoneNum.length){
+        solutions.push(subStr);
+        return;
+    }
+
+    // Get the current digit.
+    var curDigit = phoneNum.charAt(subStr.length);
+    // Call recursively once for each character in that digit index.
+    for (var i = 0; i < phoneLetters[curDigit].length; i++){
+        rTelephoneWords(phoneNum, subStr + phoneLetters[curDigit].charAt(i), solutions);
+    }
+
+    return;
+}
+
+console.log("=== 3 ===");
+console.log(telephoneWords("818-2612"));
