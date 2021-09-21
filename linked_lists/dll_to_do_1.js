@@ -167,4 +167,4 @@ console.log(numList2.isPalindrome());
 let numList4 = new SLL();
 numList4.addToFront(10).addToFront(9).addToFront(8).addToFront(7).addToFront(6).addToFront(5).addToFront(4).addToFront(3).addToFront(2).addToFront(1).printList();
 numList4.shiftBy(4).printList();
-numList4.shiftBy(-3).printList();
+numList4.shiftBy(-5).printList();
