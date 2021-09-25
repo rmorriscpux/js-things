@@ -1,25 +1,22 @@
-class TrieNode{
+class TrieMultNode{
     constructor(letter){
         this.letter = letter;
         this.word = null;
+        this.count = 0;
         this.nextLetter = [];
     }
 }
-class TrieSet{
+class TrieMultSet{
     constructor(){
-        this.head = new TrieNode(null);
+        this.head = new TrieMultNode(null);
     }
 
     insert(word){
         function _rInsert(curNode, insertWord, index){
             if (index == insertWord.length){
-                if (insertWord == curNode.word){
-                    return false;
-                }
-                else{
-                    curNode.word = insertWord;
-                    return true;
-                }
+                curNode.word = insertWord;
+                curNode.count++;
+                return true;
             }
 
             var i;
@@ -30,12 +27,12 @@ class TrieSet{
                 }
                 else if (curNode.nextLetter[i].letter > insertWord[index]){
                     // Next letter not found, but letters come after. Insert new node in the array immediately before and recur into it.
-                    curNode.nextLetter.splice(i, 0, new TrieNode(insertWord[index]));
+                    curNode.nextLetter.splice(i, 0, new TrieMultNode(insertWord[index]));
                     return _rInsert(curNode.nextLetter[i], insertWord, index+1);
                 }
             }
             // Letter not found and we are at the end. Insert new node at the end of the array and recur into it.
-            curNode.nextLetter.push(new TrieNode(insertWord[index]));
+            curNode.nextLetter.push(new TrieMultNode(insertWord[index]));
             return _rInsert(curNode.nextLetter[curNode.nextLetter.length-1], insertWord, index+1);
             
         }
@@ -47,7 +44,7 @@ class TrieSet{
         function _rContains(curNode, searchWord, index){
             if (index == searchWord.length){
                 // At the end. Final check.
-                return searchWord == curNode.word;
+                return curNode.count;
             }
 
             for (var i in curNode.nextLetter){
@@ -56,11 +53,11 @@ class TrieSet{
                 }
                 else if (curNode.nextLetter[i].letter > searchWord[index]){
                     // Next letter not found, return false. For efficiency.
-                    return false;
+                    return 0;
                 }
             }
             // If we get here, next letter not found.
-            return false;
+            return 0;
         }
 
         return _rContains(this.head, word.toLowerCase(), 0);
@@ -110,20 +107,23 @@ class TrieSet{
         function _rRemove(curNode, searchWord, index){
             if (index >= searchWord.length){
                 // We're past the word's length.
-                return false;
+                return 0;
             }
             for (var i in curNode.nextLetter){
                 if (curNode.nextLetter[i].letter == searchWord[index]){
                     // See if we have a match.
                     if (curNode.nextLetter[i].word == searchWord){
-                        // Check if the found node has branches. If not, remove the node.
-                        if (curNode.nextLetter[i].nextLetter.length > 0){
-                            curNode.nextLetter[i].word = null;
+                        curNode.nextLetter[i].count--;
+                        if (curNode.nextLetter[i].count == 0){
+                            // Check if the found node has branches. If not, remove the node.
+                            if (curNode.nextLetter[i].nextLetter.length > 0){
+                                curNode.nextLetter[i].word = null;
+                            }
+                            else{
+                                curNode.nextLetter.splice(i, 1);
+                            }
                         }
-                        else{
-                            curNode.nextLetter.splice(i, 1);
-                        }
-                        return true;
+                        return count+1;
                     }
                     else{
                         // Recur into the next node if the word isn't there.
@@ -132,7 +132,7 @@ class TrieSet{
                 }
             }
             // If we get here, word not found.
-            return false;
+            return 0;
         }
 
         return _rRemove(this.head, word, 0);
@@ -140,61 +140,13 @@ class TrieSet{
 
     size(){
         function _rSize(curNode){
-            var total = 0;
-            if (curNode.word !== null){
-                total++;
-            }
+            var total = curNode.count;
             for (i in curNode.nextLetter){
                 total += _rSize(curNode.nextLetter[i]);
             }
             return total;
         }
         return _rSize(this.head);
-    }
-
-    next(word){
-        function _rNext(curNode, searchWord, index){
-            // End condition.
-            if (index == searchWord.length){
-                if (curNode.word != searchWord && curNode.word !== null){
-                    // We have the next sequential word.
-                    return curNode.word;
-                }
-                
-                if (curNode.nextLetter.length > 0){
-                    var traverse = curNode.nextLetter[0];
-                    while (traverse.word === null){
-                        traverse = traverse.nextLetter[0];
-                    }
-                    return traverse.word;
-                }
-                else{
-                    return null;
-                }
-            }
-            else{
-                var nextWord;
-                for (i in curNode.nextLetter){
-                    if (curNode.nextLetter[i].letter == searchWord[index]){
-                        nextWord = _rNext(curNode.nextLetter[i], searchWord, index+1);
-                        if (nextWord !== null){
-                            return nextWord;
-                        }
-                    }
-                    else if (curNode.nextLetter[i].letter > searchWord[index]){
-                        nextWord = curNode.nextLetter[i];
-                        while (nextWord.word === null){
-                            nextWord = nextWord.nextLetter[0];
-                        }
-                        return nextWord.word;
-                    }
-                }
-            }
-            // If we get here, word not found.
-            return null;
-        }
-
-        return _rNext(this.head, word, 0);
     }
 
     autoComplete(searchWord, maxResults=-1){
@@ -215,22 +167,32 @@ class TrieSet{
             }
         }
         
-        function _rAutoComplete(curNode){
-            var resultArray = [];
-            if (curNode.word !== null){
-                resultArray.push(curNode.word);
+        function _rAutoComplete(curNode, resultArray, countArray){
+            if(curNode.count > 0){
+                var i;
+                for (i = 0; i < countArray.length; i++){
+                    if (curNode.count > countArray[i]){
+                        countArray.splice(i, 0, curNode.count);
+                        resultArray.splice(i, 0, curNode.word);
+                        break;
+                    }
+                }
+                if (i == countArray.length){
+                    countArray.push(curNode.count);
+                    resultArray.push(curNode.word);
+                }
             }
-            for (i in curNode.nextLetter){
-                resultArray = resultArray.concat(_rAutoComplete(curNode.nextLetter[i]));
+            for (j in curNode.nextLetter){
+                _rAutoComplete(curNode.nextLetter[j], resultArray, countArray);
             }
-            return resultArray;
+            return;
         }
 
-        var searchResult = _rAutoComplete(this.head);
-        // Note: This is the easy way to do it. Hard, more efficient way involves checking length in the recursion itself.
-        if (maxResults > 0 && maxResults < searchResult.length){
-            searchResult.length = maxResults;
+        let result = [], resultCount = [];
+        _rAutoComplete(traverse, result, resultCount);
+        if (maxResults > 0 && maxResults < result.length){
+            result.length = maxResults;
         }
-        return searchResult;
+        return result;
     }
 }
