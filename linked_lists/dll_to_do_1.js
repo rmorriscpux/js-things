@@ -156,7 +156,7 @@ numList1.reverse().printList();
 
 let numList2 = new SLL();
 numList2.addToFront(10).addToFront(9).addToFront(8).addToFront(7).addToFront(6).addToFront(5).addToFront(4).addToFront(3).addToFront(2).addToFront(1).printList();
-console.log(numList2.kthLastNode(3));
+console.log(numList2.kthLastNode(4));
 console.log(numList2.kthLastNode(10));
 
 let numList3 = new SLL();
