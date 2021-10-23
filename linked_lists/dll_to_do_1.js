@@ -160,7 +160,7 @@ console.log(numList2.kthLastNode(4));
 console.log(numList2.kthLastNode(10));
 
 let numList3 = new SLL();
-numList3.addToFront(5).addToFront(4).addToFront(3).addToFront(2).addToFront(1).addToFront(1).addToFront(2).addToFront(3).addToFront(4).addToFront(5).printList();
+numList3.addToFront(5).addToFront(3).addToFront(3).addToFront(2).addToFront(1).addToFront(1).addToFront(2).addToFront(3).addToFront(4).addToFront(5).printList();
 console.log(numList3.isPalindrome());
 console.log(numList2.isPalindrome());
 
