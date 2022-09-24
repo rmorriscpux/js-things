@@ -4,25 +4,27 @@ function quickSort( numArray ) {
         return numArray;
     }
 
-    const pivot = numArray[Math.floor(numArray.length/2)];
+    const arrayToSort = [ ...numArray ];
 
-    let i = 0, j = numArray.length-1, temp;
+    const pivot = arrayToSort[Math.floor(arrayToSort.length/2)];
+
+    let i = 0, j = arrayToSort.length-1, temp;
 
     while( i != j ) {
-        while( numArray[i] < pivot ){
+        while( arrayToSort[i] < pivot ){
             i++;
         }
-        while( numArray[j] > pivot ){
+        while( arrayToSort[j] > pivot ){
             j--;
         }
         if( i != j ){
-            temp = numArray[i];
-            numArray[i] = numArray[j];
-            numArray[j] = temp;
+            temp = arrayToSort[i];
+            arrayToSort[i] = arrayToSort[j];
+            arrayToSort[j] = temp;
         }
     }
 
-    const left = quickSort(numArray.slice(0, j)), right = quickSort(numArray.slice(j+1));
+    const left = quickSort(arrayToSort.slice(0, j)), right = quickSort(arrayToSort.slice(j+1));
     const sortedArray = left.concat([pivot], right);
 
     return sortedArray;
@@ -34,4 +36,6 @@ O(N^2)
 Ω(N log N)
 */
 
-console.log(quickSort([9, 0, 8, 1, 7, 2, 6, 3, 5, 4]));
+const numArr = [9, 0, 8, 1, 7, 2, 6, 3, 5, 4];
+console.log(quickSort(numArr));
+console.log(numArr);
